@@ -1,4 +1,20 @@
-import { DiscountOffer } from "./store";
+export class DiscountOffer {
+  constructor(partnerName, expiresIn, discountRateInPercent) {
+    this.partnerName = partnerName;
+    this.expiresIn = expiresIn;
+    this.discountInPercent = discountRateInPercent;
+  }
+
+  applyDiscount() {
+    if (this.discountInPercent > 0) {
+      this.discountInPercent = this.discountInPercent - 1;
+    }
+    this.expiresIn = this.expiresIn - 1;
+    if (this.expiresIn < 0 && this.discountInPercent > 0) {
+      this.discountInPercent = this.discountInPercent - 1;
+    }
+  }
+}
 
 export class NaturaliaDiscountOffer extends DiscountOffer {
   constructor(expiresIn, discountRateInPercent) {
@@ -45,5 +61,21 @@ export class IlekDiscountOffer extends DiscountOffer {
 
   applyDiscount() {
     // Do nothing
+  }
+}
+
+export class BackMarketDiscountOffer extends DiscountOffer {
+  constructor(expiresIn, discountRateInPercent) {
+    super("BackMarket", expiresIn, discountRateInPercent);
+  }
+
+  applyDiscount() {
+    if (this.discountInPercent > 0) {
+      this.discountInPercent = this.discountInPercent - 2;
+    }
+    this.expiresIn = this.expiresIn - 1;
+    if (this.expiresIn < 0 && this.discountInPercent > 0) {
+      this.discountInPercent = this.discountInPercent - 2;
+    }
   }
 }
