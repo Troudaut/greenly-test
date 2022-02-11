@@ -1,3 +1,6 @@
+const MIN_DISCOUNT_IN_PERCENT = 0;
+const MAX_DISCOUNT_IN_PERCENT = 50;
+
 export class DiscountOffer {
   constructor(partnerName, expiresIn, discountRateInPercent) {
     this.partnerName = partnerName;
@@ -6,13 +9,44 @@ export class DiscountOffer {
   }
 
   applyDiscount() {
-    if (this.discountInPercent > 0) {
-      this.discountInPercent = this.discountInPercent - 1;
+    if (this.canDecreaseDiscountInPercent()) {
+      this.decreaseDiscountInPercent();
     }
+    this.decreaseExpireIn();
+
+    if (this.hasExpired() && this.canDecreaseDiscountInPercent()) {
+      this.decreaseDiscountInPercent();
+    }
+  }
+
+  canDecreaseDiscountInPercent() {
+    return this.discountInPercent > MIN_DISCOUNT_IN_PERCENT;
+  }
+
+  decreaseDiscountInPercent(decrementValue = 1) {
+    this.discountInPercent = Math.max(
+      this.discountInPercent - decrementValue,
+      MIN_DISCOUNT_IN_PERCENT
+    );
+  }
+
+  canIncreaseDiscountInPercent() {
+    return this.discountInPercent < MAX_DISCOUNT_IN_PERCENT;
+  }
+
+  increaseDiscountInPercent(incrementValue = 1) {
+    this.discountInPercent = Math.min(
+      this.discountInPercent + incrementValue,
+      MAX_DISCOUNT_IN_PERCENT
+    );
+  }
+
+  decreaseExpireIn() {
     this.expiresIn = this.expiresIn - 1;
-    if (this.expiresIn < 0 && this.discountInPercent > 0) {
-      this.discountInPercent = this.discountInPercent - 1;
-    }
+  }
+
+  hasExpired() {
+    return this.expiresIn < 0;
   }
 }
 
@@ -22,12 +56,12 @@ export class NaturaliaDiscountOffer extends DiscountOffer {
   }
 
   applyDiscount() {
-    if (this.discountInPercent < 50) {
-      this.discountInPercent = this.discountInPercent + 1;
+    if (this.canIncreaseDiscountInPercent()) {
+      this.increaseDiscountInPercent();
     }
-    this.expiresIn = this.expiresIn - 1;
-    if (this.expiresIn < 0 && this.discountInPercent < 50) {
-      this.discountInPercent = this.discountInPercent + 1;
+    this.decreaseExpireIn();
+    if (this.hasExpired() && this.canIncreaseDiscountInPercent()) {
+      this.increaseDiscountInPercent();
     }
   }
 }
@@ -38,17 +72,17 @@ export class VintedDiscountOffer extends DiscountOffer {
   }
 
   applyDiscount() {
-    if (this.discountInPercent < 50) {
-      this.discountInPercent = this.discountInPercent + 1;
+    if (this.canIncreaseDiscountInPercent()) {
+      this.increaseDiscountInPercent();
     }
-    this.expiresIn = this.expiresIn - 1;
-    if (this.expiresIn < 11 && this.discountInPercent < 50) {
-      this.discountInPercent = this.discountInPercent + 1;
+    this.decreaseExpireIn();
+    if (this.expiresIn < 11 && this.canIncreaseDiscountInPercent()) {
+      this.increaseDiscountInPercent();
     }
-    if (this.expiresIn < 6 && this.discountInPercent < 50) {
-      this.discountInPercent = this.discountInPercent + 1;
+    if (this.expiresIn < 6 && this.canIncreaseDiscountInPercent()) {
+      this.increaseDiscountInPercent();
     }
-    if (this.expiresIn < 0) {
+    if (this.hasExpired()) {
       this.discountInPercent = 0;
     }
   }
@@ -70,12 +104,12 @@ export class BackMarketDiscountOffer extends DiscountOffer {
   }
 
   applyDiscount() {
-    if (this.discountInPercent > 0) {
-      this.discountInPercent = this.discountInPercent - 2;
+    if (this.canDecreaseDiscountInPercent()) {
+      this.decreaseDiscountInPercent(2);
     }
-    this.expiresIn = this.expiresIn - 1;
-    if (this.expiresIn < 0 && this.discountInPercent > 0) {
-      this.discountInPercent = this.discountInPercent - 2;
+    this.decreaseExpireIn();
+    if (this.hasExpired() && this.canDecreaseDiscountInPercent()) {
+      this.decreaseDiscountInPercent(2);
     }
   }
 }
