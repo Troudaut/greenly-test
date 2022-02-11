@@ -1,5 +1,9 @@
 import { Store, DiscountOffer } from "./store";
-import { NaturaliaDiscountOffer, VintedDiscountOffer, IlekDiscountOffer } from "./discount";
+import {
+  NaturaliaDiscountOffer,
+  VintedDiscountOffer,
+  IlekDiscountOffer
+} from "./discount";
 
 import fs from "fs";
 
